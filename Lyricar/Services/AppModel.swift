@@ -107,6 +107,7 @@ final class AppModel {
 
     private func updateLiveness() {
         engine.isForeground = phoneActive || carPlayConnected || liveActivityOn
+        engine.pollsFast = phoneActive || carPlayConnected
         if engine.isPlaying || phoneActive { lastActiveAt = Date() }
         // The keep-alive runs whenever the app is in front, so it is already playing when
         // the screen locks: iOS may refuse to start audio from the background. It then
@@ -131,6 +132,7 @@ final class AppModel {
     }
 
     @ObservationIgnored private var lifecycleObservers: [NSObjectProtocol] = []
+    @ObservationIgnored private var lastLifecycleEvent: (label: String, at: Date)?
 
     /// Lifecycle and lock events in the diagnostics log, each with the audio state, so a
     /// device run shows what the keep-alive looked like when the screen locked.
@@ -145,6 +147,10 @@ final class AppModel {
             NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
                 MainActor.assumeIsolated {
                     guard let self else { return }
+                    // iOS posts the unlock twice within a millisecond; one line is enough.
+                    let now = Date()
+                    if let last = self.lastLifecycleEvent, last.label == label, now.timeIntervalSince(last.at) < 1 { return }
+                    self.lastLifecycleEvent = (label, now)
                     Diagnostics.record("APP \(label) \(self.keepAlive.status)", keepAlive: self.keepAlive.isRunning)
                 }
             }

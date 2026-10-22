@@ -43,8 +43,13 @@ public final class LyricsEngine {
     @ObservationIgnored private let offsets: UserDefaults
 
     /// Set by the app: true while a screen shows lyrics (phone in front, CarPlay
-    /// connected, Live Activity on). Faster polling then, gentler otherwise.
+    /// connected, Live Activity on). Line changes are then tracked at 10 Hz.
     public var isForeground = true
+
+    /// Set by the app: true while someone can act on the lyrics (phone in front, CarPlay).
+    /// A Live Activity alone does not count: on a locked phone the clock carries the
+    /// lyrics, and 1 s polls around the clock got the app rate limited for 98 minutes.
+    public var pollsFast = true
 
     /// Per-track manual correction in ms, applied everywhere through `positionMs`
     /// and `trackStartDate`. Positive shows lyrics earlier (for lyrics that lag).
@@ -52,19 +57,20 @@ public final class LyricsEngine {
 
     /// Polling cadence. A play, pause or seek is noticed within one interval, so this is
     /// the sync budget. Paused polls stay fast too: resuming must not leave lyrics frozen.
-    /// Spotify rate limits over a rolling 30 s window; one request per second per user
-    /// stays well inside it, and a 429 makes the loop honor Retry-After.
+    /// Spotify rate limits over a rolling 30 s window and, after hours of steady 1 s polls,
+    /// for much longer: a locked phone got a 98 minute Retry-After on 21 Oct. So 1 s only
+    /// while someone looks; the background relies on the clock plus the end-of-track poll.
     nonisolated public static func pollInterval(isPlaying: Bool, hasTrack: Bool, foreground: Bool) -> Duration {
         switch (hasTrack, foreground) {
         case (true, true): return .milliseconds(1000)
-        case (true, false): return isPlaying ? .milliseconds(2000) : .milliseconds(3000)
+        case (true, false): return .milliseconds(3000)
         case (false, true): return .seconds(3)
         case (false, false): return .seconds(6)
         }
     }
 
     private var currentPollInterval: Duration {
-        Self.pollInterval(isPlaying: isPlaying, hasTrack: track != nil, foreground: isForeground)
+        Self.pollInterval(isPlaying: isPlaying, hasTrack: track != nil, foreground: pollsFast)
     }
 
     public init(lyricsSource: LRCLibClient = LRCLibClient(), offsets: UserDefaults = .standard) {

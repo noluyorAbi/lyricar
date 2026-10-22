@@ -56,7 +56,7 @@ No Spotify developer app yet? Run the Simulator with the `-LyricarDemo` launch a
 
 | Surface | Views | Updates |
 |---|---|---|
-| iPhone app | Karaoke (full sheet, current line pinned in the upper third), Focus (one huge line plus the next), Verse (widget layout at phone size) | 10 Hz local clock, Spotify polled every 1 s (2 to 3 s in the background) |
+| iPhone app | Karaoke (full sheet, current line pinned in the upper third), Focus (one huge line plus the next), Verse (widget layout at phone size) | 10 Hz local clock, Spotify polled every 1 s (3 s in the background or behind a Live Activity) |
 | Lock Screen and Dynamic Island | Live Activity: Lock Screen banner, Dynamic Island compact, expanded and minimal, and the `.small` family that iOS 26 shows on the CarPlay dashboard and the Watch Smart Stack | Every line change; the progress bar animates on its own via `ProgressView(timerInterval:)` |
 | Widgets | Lyric Line, Up Next, Remote (previous, play/pause, next), Verse, Gauge, in Home Screen and Lock Screen sizes | No app wake-ups: the widget gets the whole timed sheet and schedules one timeline entry per line |
 | CarPlay | Karaoke (list windowed around the current line), Focus (current line, next as detail), Stage (style picker), Track (song, source, resync, controls) | Same engine, pushed on every line change |
@@ -130,7 +130,7 @@ Every style and widget size is rendered for review by the `-LyricarRenderGallery
 ## How it works
 
 ```
-Spotify Web API  /me/player/currently-playing  (1 s while visible, 2 to 3 s in background, honors Retry-After)
+Spotify Web API  /me/player/currently-playing  (1 s while the phone or CarPlay shows lyrics, 3 s otherwise, honors Retry-After)
         |
         v
 PlaybackClock    sample pinned to the request midpoint, interpolated locally,
@@ -149,7 +149,7 @@ Measured causes of drift and what fixed them:
 
 | Cause | Fix |
 |---|---|
-| Polled every 6 s while paused, so resuming left lyrics frozen up to 6 s | 1 s polling whenever a surface shows lyrics, paused or not |
+| Polled every 6 s while paused, so resuming left lyrics frozen up to 6 s | 1 s polling while the phone or CarPlay shows lyrics, paused or not |
 | Drift under 500 ms was never corrected | Precision-weighted clock: each sample's track-start estimate is accurate to half its round trip; the most precise one of the last 20 s wins, so steady error stays within a few tens of ms |
 | A slow response could pull the clock off | A sample only moves the clock if it is more precise, or if its uncertainty cannot explain the difference (then it is a seek, even a small one, and applies at once) |
 | The old song's last line lingered after a track ended | Extra poll at the predicted end of the track |
@@ -159,7 +159,7 @@ Measured causes of drift and what fixed them:
 | A denied widget reload left the old song on the tile | Each timeline asks again 2 s after its track ends and reads the snapshot the app saved anyway |
 | A token Spotify revoked early was reused until its local expiry | A 401 invalidates it, the next poll refreshes |
 | A lyrics lookup that hit a dead network on wake showed "No lyrics" for the whole song | Retried after 2, 5 and 10 s while the track plays |
-| Polling could hit Spotify's rate limit | 1 s only while a screen shows lyrics, 2 to 3 s in the background; a 429 pauses polling for `Retry-After` |
+| A locked phone with a Live Activity polled every second for hours and got a 98 minute rate limit, so lyrics froze | 1 s only while the phone or CarPlay shows lyrics, 3 s behind the lock screen, plus the end-of-track poll; a 429 pauses polling for `Retry-After` and is logged |
 | A lyrics file timed for a different release | Per-track nudge on phone and CarPlay, remembered per track |
 
 Home Screen widgets have one limit no code removes: WidgetKit grants roughly 40 to 70 background reloads per day. Widgets schedule every line themselves and only need a reload on a track change, pause or seek, so a normal day fits, but a long session with many skips can use up the budget. The Live Activity and CarPlay are not affected by it.

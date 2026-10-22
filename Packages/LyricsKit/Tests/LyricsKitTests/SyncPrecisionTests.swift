@@ -51,6 +51,6 @@ import Testing
     @Test func pollingStaysFastWhenPausedSoResumeIsCaughtQuickly() {
         #expect(LyricsEngine.pollInterval(isPlaying: false, hasTrack: true, foreground: true) <= .milliseconds(1000))
         #expect(LyricsEngine.pollInterval(isPlaying: true, hasTrack: true, foreground: true) <= .milliseconds(1000))
-        #expect(LyricsEngine.pollInterval(isPlaying: true, hasTrack: true, foreground: false) <= .milliseconds(2000))
+        #expect(LyricsEngine.pollInterval(isPlaying: true, hasTrack: true, foreground: false) <= .milliseconds(3000))
     }
 }

@@ -31,8 +31,9 @@ import sys, datetime
 rows=[l.split(" ") for l in open(sys.argv[1]) if " poll " in l]
 def t(r): return datetime.datetime.fromisoformat(r[0].replace("Z","+00:00"))
 gaps=[(t(b)-t(a)).total_seconds() for a,b in zip(rows,rows[1:])]
-locked=[(t(b)-t(a)).total_seconds() for a,b in zip(rows,rows[1:]) if "protectedData=locked" in " ".join(b)]
-lp=[(t(b)-t(a)).total_seconds() for a,b in zip(rows,rows[1:]) if "lowPower=true" in " ".join(b)]
+# Classified by the poll that starts the gap: a stall begins locked and ends after an unlock.
+locked=[(t(b)-t(a)).total_seconds() for a,b in zip(rows,rows[1:]) if "protectedData=locked" in " ".join(a)]
+lp=[(t(b)-t(a)).total_seconds() for a,b in zip(rows,rows[1:]) if "lowPower=true" in " ".join(a)]
 print(f"max gap overall: {max(gaps, default=0):.1f}s, while locked: {max(locked, default=0):.1f}s, in Low Power Mode: {max(lp, default=0):.1f}s")
 PY
 echo "keep-alive and lifecycle events (last 25):"
