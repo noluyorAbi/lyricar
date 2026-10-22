@@ -294,6 +294,8 @@ public final class LyricsEngine {
         guard let spotify else { return .seconds(6) }
         do {
             guard let now = try await spotify.currentlyPlaying() else {
+                // Logged too, so a gap in the poll lines means the loop stalled, not 204s.
+                onPoll?("poll none")
                 apply(nil)
                 return currentPollInterval
             }
@@ -301,14 +303,17 @@ public final class LyricsEngine {
             return currentPollInterval
         } catch SpotifyError.unauthorized {
             // The client has invalidated the token; the next poll refreshes it.
+            onPoll?("poll error unauthorized")
             set(.signedOut)
             return .seconds(2)
         } catch SpotifyError.rateLimited(let retryAfter) {
             syncLog.notice("RATE-LIMITED retryAfter=\(retryAfter)")
+            onPoll?("poll error rateLimited retryAfter=\(retryAfter)")
             return .seconds(max(retryAfter, 1))
         } catch is CancellationError {
             return currentPollInterval
         } catch {
+            onPoll?("poll error \(error.localizedDescription)")
             if track == nil { set(.failed(error.localizedDescription)) }
             return currentPollInterval
         }
