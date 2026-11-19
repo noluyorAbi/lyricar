@@ -1,10 +1,20 @@
 # Lyricar
 
-> Open source iOS 26 app (Apache-2.0) that shows line-synced lyrics for whatever is playing on your Spotify, on the iPhone, the Lock Screen, the Dynamic Island, widgets and CarPlay. Not on the App Store; you build it from source with Xcode 26 and your own Spotify developer app. Not affiliated with Spotify.
+> Open source iOS 26 app (Apache-2.0) that shows line-synced lyrics for whatever is playing on your Spotify, on the iPhone, the Lock Screen, the Dynamic Island, widgets and CarPlay. Not on the App Store; you build it from source with Xcode 26 and your own Spotify developer app. Lyrics come from LRCLIB at runtime. Not affiliated with Spotify.
 
 ## Pages
 
-- [Landing page](https://lyricar.adatepe.dev/): features, screenshots, how it works, build steps and limits
+- [Landing page](https://lyricar.adatepe.dev/): the now playing screen, every surface, how sync works, the eight styles, a demo video, build steps and limits
 - [Source and README](https://github.com/noluyorAbi/lyricar): build instructions and Spotify developer app setup
+- [AGENTS.md](https://github.com/noluyorAbi/lyricar/blob/main/AGENTS.md): build and test commands, source layout and the rules that keep sync correct
+- [Roadmap](https://github.com/noluyorAbi/lyricar/blob/main/ROADMAP.md): what comes next and the limits known today
+- [Demo video](https://github.com/noluyorAbi/lyricar/blob/main/docs/media/demo.mp4): 45 seconds from the iOS Simulator with an invented demo song
 - [Changelog](https://github.com/noluyorAbi/lyricar/blob/main/CHANGELOG.md)
 - [Security policy](https://github.com/noluyorAbi/lyricar/security/policy)
+
+## Facts
+
+- Spotify is polled once a second while the phone or CarPlay shows lyrics, every 3 seconds otherwise; a 429 pauses polling for Retry-After.
+- A local 10 Hz clock moves the line between polls; the sync tests hold it within 60 ms.
+- Spotify Development Mode limits a self-built app to 5 users, and the owner needs Spotify Premium.
+- Only two services are contacted: the Spotify Web API and LRCLIB. No backend, no analytics.
