@@ -274,7 +274,7 @@ h2.display { font-size: calc(clamp(32px, 4.2vw, 52px) * var(--lyric-scale)); }
 .np-more { flex: none; width: 36px; height: 36px; display: grid; place-items: center; color: var(--dim); }
 .np-more svg { width: 20px; height: 20px; }
 
-.views { position: relative; height: 420px; overflow: hidden; }
+.views { position: relative; height: 420px; overflow: hidden; overflow: clip; }
 @media (max-width: 520px) { .views { height: 380px; } }
 .view {
   position: absolute; inset: 0;
@@ -312,6 +312,9 @@ h2.display { font-size: calc(clamp(32px, 4.2vw, 52px) * var(--lyric-scale)); }
 }
 .k-line.is-past { color: var(--faint); }
 .k-line.is-current { color: var(--ink); transform: none; text-shadow: 0 0 12px var(--glow); }
+/* Keyboard focus sits on the sheet; the ring goes around the line the arrow keys move. */
+.k-sheet:focus-visible { outline: none; }
+.view-karaoke:has(.k-sheet:focus-visible) .k-line.is-current { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: 10px; }
 @media (max-width: 520px) { .k-line { font-size: calc(27px * var(--lyric-scale)); } }
 
 /* Focus: one line as large as fits, rising in from below. */

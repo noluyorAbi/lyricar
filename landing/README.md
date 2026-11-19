@@ -2,7 +2,7 @@
 
 The site at [lyricar.adatepe.dev](https://lyricar.adatepe.dev). Static HTML, CSS and a little
 vanilla JavaScript: no framework, no build step, no npm dependency, and no request to a third
-party host. The committed files are what Vercel serves (project `lyricar`, see `.vercel/`).
+party host. The committed files are what Vercel serves (Vercel project `lyricar`).
 
 ```
 python3 -m http.server 4321 --bind 127.0.0.1 --directory landing   # or: sh landing/preview.sh
@@ -46,6 +46,9 @@ Change a style in the app, change the matching block here.
 - **Motion has a way out.** With `prefers-reduced-motion: reduce` the song starts paused, lines
   change by a short crossfade, nothing slides. The clock only runs while a live section is on
   screen and the tab is visible, and the play button pauses it everywhere.
+- **Every tap has a key.** The karaoke sheet is one tab stop: the up and down arrows, Home and
+  End jump between lines the way a tap on a line does, without the slide. The focus ring sits on
+  the current line. `.views` uses `overflow: clip`, so focusing the sheet cannot scroll it.
 - **No horizontal scroll at 390 px.** Every single-column grid uses `minmax(0, 1fr)`.
 - **Fonts are self-hosted.** `fonts/` holds Latin subsets of the Barlow faces the app bundles
   (SIL Open Font License, `fonts/OFL-Barlow.txt`). The rounded, serif and mono styles use system

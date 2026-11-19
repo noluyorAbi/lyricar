@@ -74,16 +74,17 @@
     return p < 0 ? p + DURATION : p;
   }
 
-  function seek(ms) {
+  function seek(ms, instant) {
     ms = ((ms % DURATION) + DURATION) % DURATION;
     if (clock.playing) clock.anchor = now() - ms;
     else clock.pausedAt = ms;
-    update(false);
+    update(Boolean(instant));
   }
 
-  function seekLine(i) {
+  /* `instant` for keyboard jumps: a key press moves the sheet without a slide. */
+  function seekLine(i, instant) {
     i = Math.max(0, Math.min(lines.length - 1, i));
-    seek(lines[i].ms + 1);
+    seek(lines[i].ms + 1, instant);
   }
 
   function setPlaying(on) {
@@ -388,6 +389,18 @@
     }
     var copy = target.closest("[data-copy]");
     if (copy) copyCommand(copy);
+  });
+
+  /* The karaoke sheet is one tab stop; the arrow keys do what a tap on a line does. */
+  sheet.addEventListener("keydown", function (event) {
+    var target;
+    if (event.key === "ArrowDown") target = current + 1;
+    else if (event.key === "ArrowUp") target = current - 1;
+    else if (event.key === "Home") target = 0;
+    else if (event.key === "End") target = lines.length - 1;
+    else return;
+    event.preventDefault();
+    seekLine(target, true);
   });
 
   if (reduceQuery.addEventListener) {
