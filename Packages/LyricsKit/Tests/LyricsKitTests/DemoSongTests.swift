@@ -1,3 +1,4 @@
+#if DEBUG
 import Foundation
 import Testing
 @testable import LyricsKit
@@ -28,3 +29,4 @@ import Testing
         #expect(try await DemoSong.client().lyrics(for: other) == nil)
     }
 }
+#endif

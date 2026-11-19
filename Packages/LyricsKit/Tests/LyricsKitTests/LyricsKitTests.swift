@@ -5,9 +5,9 @@ import Testing
 @Suite struct LRCParserTests {
     @Test func parsesTimestampsMetadataAndMultiStampLines() {
         let lrc = """
-        [ar:M83]
-        [ti:Midnight City]
-        [00:12.34]Waiting in a car
+        [ar:The Lyricar House Band]
+        [ti:Amber on the Dashboard]
+        [00:12.34]Headlights paint the overpass
         [00:20.5][01:05.123]Chorus line
         [00:30:10]
         not a lyric line
@@ -15,7 +15,7 @@ import Testing
         let doc = LRCParser.parse(lrc, provider: "test")
         #expect(doc.syncType == .lineSynced)
         #expect(doc.lines.map(\.startMs) == [12_340, 20_500, 30_100, 65_123])
-        #expect(doc.lines.map(\.text) == ["Waiting in a car", "Chorus line", "", "Chorus line"])
+        #expect(doc.lines.map(\.text) == ["Headlights paint the overpass", "Chorus line", "", "Chorus line"])
         #expect(doc.lines.map(\.id) == [0, 1, 2, 3])
         #expect(doc.lines[2].isInstrumental)
         #expect(doc.lines[2].displayText == "\u{266A}")

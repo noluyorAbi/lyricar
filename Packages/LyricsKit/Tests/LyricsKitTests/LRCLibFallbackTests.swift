@@ -20,7 +20,7 @@ final class StubProtocol: URLProtocol, @unchecked Sendable {
 }
 
 @Suite(.serialized) struct LRCLibFallbackTests {
-    let track = SpotifyTrack(id: "t", name: "Midnight City", artists: ["M83"], album: "Midnight City", artworkURL: nil, durationMs: 241_000)
+    let track = SpotifyTrack(id: "t", name: "Amber on the Dashboard", artists: ["The Lyricar House Band"], album: "Demo Tape", artworkURL: nil, durationMs: 241_000)
 
     func client() -> LRCLibClient {
         let configuration = URLSessionConfiguration.ephemeral
@@ -33,13 +33,13 @@ final class StubProtocol: URLProtocol, @unchecked Sendable {
             let query = request.url?.query ?? ""
             if query.contains("album_name") { return (503, Data()) }
             if request.url?.path == "/api/get" {
-                return (200, Data(#"{"duration":241,"instrumental":false,"syncedLyrics":"[00:37.68] Waiting in a car"}"#.utf8))
+                return (200, Data(#"{"duration":241,"instrumental":false,"syncedLyrics":"[00:37.68] Headlights paint the overpass"}"#.utf8))
             }
             return (404, Data())
         }
         let document = try #require(try await client().lyrics(for: track))
         #expect(document.syncType == .lineSynced)
-        #expect(document.lines.first?.text == "Waiting in a car")
+        #expect(document.lines.first?.text == "Headlights paint the overpass")
     }
 
     @Test func everyAttemptFailingThrowsSoTheMissIsNotCached() async {
