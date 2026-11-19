@@ -24,7 +24,9 @@ final class DemoSource: NowPlayingSource, PlayerControlling, @unchecked Sendable
     )
 
     static var isRequested: Bool { ProcessInfo.processInfo.arguments.contains("-LyricarDemo") }
-    static var playsSong: Bool { ProcessInfo.processInfo.arguments.contains("-LyricarDemoSong") }
+    /// Only together with `-LyricarDemo`: alone it would hand a real Spotify session a lyrics
+    /// client that answers every real track with a definitive miss.
+    static var playsSong: Bool { isRequested && ProcessInfo.processInfo.arguments.contains("-LyricarDemoSong") }
 
     func currentlyPlaying() async throws -> NowPlaying? {
         let now = Date()

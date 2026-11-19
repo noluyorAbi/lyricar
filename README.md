@@ -129,7 +129,7 @@ Reading lyrics while driving is a distraction. The CarPlay views are built to be
 | Neon | Synthwave purple, monospaced, glow |
 | Daylight | Light background for sun glare |
 
-Every style and widget size is rendered for review by the `-LyricarRenderGallery` launch argument (with `-LyricarDemoSong`, as here); the results are in [`docs/screens/styles`](docs/screens/styles). Fonts are Barlow and Barlow Condensed under the SIL Open Font License (`Shared/Fonts`).
+Every style and widget size is rendered for review by the `-LyricarRenderGallery` launch argument (with `-LyricarDemo -LyricarDemoSong`, as here); the results are in [`docs/screens/styles`](docs/screens/styles). Fonts are Barlow and Barlow Condensed under the SIL Open Font License (`Shared/Fonts`).
 
 <img src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/screens/styles/midnight.png" width="49%" alt="Midnight style: widgets, Lock Screen Live Activity, CarPlay dashboard widgets and CarPlay stage card">
 <img src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/screens/styles/motorsport.png" width="49%" alt="Motorsport style: widgets, Lock Screen Live Activity, CarPlay dashboard widgets and CarPlay stage card">
