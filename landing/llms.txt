@@ -8,7 +8,7 @@
 - [Source and README](https://github.com/noluyorAbi/lyricar): build instructions and Spotify developer app setup
 - [AGENTS.md](https://github.com/noluyorAbi/lyricar/blob/main/AGENTS.md): build and test commands, source layout and the rules that keep sync correct
 - [Roadmap](https://github.com/noluyorAbi/lyricar/blob/main/ROADMAP.md): what comes next and the limits known today
-- [Demo video](https://github.com/noluyorAbi/lyricar/blob/main/docs/media/demo.mp4): 45 seconds from the iOS Simulator with an invented demo song
+- [Demo video](https://github.com/noluyorAbi/lyricar/blob/main/docs/media/demo.mp4): 41 seconds from the iOS Simulator with an invented demo song
 - [Changelog](https://github.com/noluyorAbi/lyricar/blob/main/CHANGELOG.md)
 - [Security policy](https://github.com/noluyorAbi/lyricar/security/policy)
 

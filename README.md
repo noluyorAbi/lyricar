@@ -51,10 +51,10 @@ No Spotify developer app yet? Run the Simulator with the `-LyricarDemo` launch a
 ## Demo
 
 <a href="https://github.com/noluyorAbi/lyricar/blob/main/docs/media/demo.mp4">
-  <img alt="Play the 45 second demo" src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/media/demo-poster.jpg" width="720">
+  <img alt="Play the 41 second demo" src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/media/demo-poster.jpg" width="720">
 </a>
 
-45 seconds from the iOS Simulator, launched with `-LyricarDemo -LyricarDemoSong`: Karaoke, Focus and Verse in five styles, then the Dynamic Island with the app in the background. Each cut is a relaunch with another style. Nothing in it is mocked up; the song is the invented demo track.
+41 seconds from the iOS Simulator, launched with `-LyricarDemo -LyricarDemoSong`: Karaoke, Focus and Verse in four styles (Midnight, Motorsport, Neon, Night Drive), then the Dynamic Island on the Home Screen while the app runs in the background. Each cut is a relaunch with another style. The frames are uncropped Simulator recordings, only scaled down, and the song is the invented demo track.
 
 ## What you get
 
@@ -148,7 +148,7 @@ LyricsEngine     one per process, shared by the phone scene and the CarPlay scen
  SwiftUI  CarPlay templates   Live Activity        LyricsSnapshot -> App Group -> widget timeline
 ```
 
-Lyrics come from [LRCLIB](https://lrclib.net), a public, keyless lyrics database, and are fetched at runtime; Release builds bundle none. Debug builds carry one invented demo song (`DemoSong`) for `-LyricarDemoSong`. Lookup order: exact match with album, exact match without album (LRCLIB answers 503 for some album lookups it has not cached), then fuzzy search filtered to tracks within 3 s of the Spotify duration, preferring synced lyrics. A network failure is never cached as "no lyrics"; only a definitive answer is. The data model (`SyncType.lineSynced / .unsynced`, `lines[{startMs, text}]`, `provider`) is the common shape for synced lyrics, so another source can slot in behind it.
+Lyrics come from [LRCLIB](https://lrclib.net), a public, keyless lyrics database, and are fetched at runtime. Release builds bundle no song lyrics: the only lyric text in them is four invented lines that widgets show in the widget gallery and before the first song. Debug builds also carry one invented demo song (`DemoSong`) for `-LyricarDemoSong`. Lookup order: exact match with album, exact match without album (LRCLIB answers 503 for some album lookups it has not cached), then fuzzy search filtered to tracks within 3 s of the Spotify duration, preferring synced lyrics. A network failure is never cached as "no lyrics"; only a definitive answer is. The data model (`SyncType.lineSynced / .unsynced`, `lines[{startMs, text}]`, `provider`) is the common shape for synced lyrics, so another source can slot in behind it.
 
 ### Staying in sync
 
