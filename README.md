@@ -29,18 +29,14 @@
 
 <table>
   <tr>
-    <td width="33%"><img src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/screens/phone-karaoke.png" alt="Karaoke view on the iPhone, current line pinned in the upper third"></td>
-    <td width="33%"><img src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/screens/home-widgets.png" alt="Lyric Line, Up Next and Remote widgets on the Home Screen"></td>
-    <td width="33%"><img src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/screens/phone-live-karaoke.png" alt="Karaoke view following a live Spotify session"></td>
+    <td width="25%"><img src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/media/screens/01-karaoke-midnight.jpg" alt="Karaoke view in the Midnight style, current line pinned in the upper third"></td>
+    <td width="25%"><img src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/media/screens/02-focus-motorsport.jpg" alt="Focus view in the Motorsport style: one large line and the next"></td>
+    <td width="25%"><img src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/media/screens/03-verse-neon.jpg" alt="Verse view in the Neon style: previous, current and next line on a card"></td>
+    <td width="25%"><img src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/media/screens/04-focus-night-drive.jpg" alt="Focus view in the Night Drive style"></td>
   </tr>
 </table>
 
-<img src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/screens/dynamic-island-line.png" width="98%" alt="Dynamic Island showing the current lyric line">
-
-<img src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/screens/carplay-karaoke.png" width="49%" alt="CarPlay Karaoke tab, list windowed around the current line">
-<img src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/screens/carplay-stage-styles.png" width="49%" alt="CarPlay Stage tab with the style picker">
-
-<sub>27 second walkthrough: <a href="https://github.com/noluyorAbi/lyricar/releases/download/v0.1.0/demo.mp4"><code>demo.mp4</code></a> in the <a href="https://github.com/noluyorAbi/lyricar/releases/tag/v0.1.0">v0.1.0 release</a>.</sub>
+<sub>Screens from the iOS Simulator in demo mode. The song and its lyrics were written for the demo; in normal use they come from LRCLIB.</sub>
 
 </div>
 
@@ -51,6 +47,14 @@ Spotify shows lyrics inside its own app and nowhere else. Lock the phone, open a
 It doubles as a small, readable example of the newer iOS surfaces: Live Activities, WidgetKit timelines that run without waking the app, App Intents that control playback from a widget, and CarPlay templates, all fed by one engine.
 
 No Spotify developer app yet? Run the Simulator with the `-LyricarDemo` launch argument and see it work in a minute.
+
+## Demo
+
+<a href="https://github.com/noluyorAbi/lyricar/blob/main/docs/media/demo.mp4">
+  <img alt="Play the 45 second demo" src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/media/demo-poster.jpg" width="720">
+</a>
+
+45 seconds from the iOS Simulator, launched with `-LyricarDemo -LyricarDemoSong`: Karaoke, Focus and Verse in five styles, then the Dynamic Island with the app in the background. Each cut is a relaunch with another style. Nothing in it is mocked up; the song is the invented demo track.
 
 ## What you get
 
@@ -77,7 +81,7 @@ open Lyricar.xcodeproj
 
 Pick the `Lyricar` scheme and run. `scripts/setup.sh` writes the gitignored `Config/Local.xcconfig` (template: `Config/Local.xcconfig.example`) and runs `xcodegen generate`. Prefer to fill it in by hand? Copy the example, set `DEVELOPMENT_TEAM`, `LYRICAR_BUNDLE_PREFIX` and `SPOTIFY_CLIENT_ID`, then run `xcodegen generate`.
 
-No Spotify app yet? Run in the Simulator with the `-LyricarDemo` launch argument: a fake playback clock plays "Midnight City" by M83 with real lyrics from LRCLIB.
+No Spotify app yet? Run in the Simulator with the `-LyricarDemo` launch argument: a fake playback clock plays "Midnight City" by M83 with real lyrics from LRCLIB. Add `-LyricarDemoSong` for an invented song with lyrics written for this project, served offline; use that one for anything you publish.
 
 ### 1. Create your Spotify app
 
@@ -125,7 +129,10 @@ Reading lyrics while driving is a distraction. The CarPlay views are built to be
 | Neon | Synthwave purple, monospaced, glow |
 | Daylight | Light background for sun glare |
 
-Every style and widget size is rendered for review by the `-LyricarRenderGallery` launch argument; the results are in [`docs/screens/styles`](docs/screens/styles). Fonts are Barlow and Barlow Condensed under the SIL Open Font License (`Shared/Fonts`).
+Every style and widget size is rendered for review by the `-LyricarRenderGallery` launch argument (with `-LyricarDemoSong`, as here); the results are in [`docs/screens/styles`](docs/screens/styles). Fonts are Barlow and Barlow Condensed under the SIL Open Font License (`Shared/Fonts`).
+
+<img src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/screens/styles/midnight.png" width="49%" alt="Midnight style: widgets, Lock Screen Live Activity, CarPlay dashboard widgets and CarPlay stage card">
+<img src="https://raw.githubusercontent.com/noluyorAbi/lyricar/main/docs/screens/styles/motorsport.png" width="49%" alt="Motorsport style: widgets, Lock Screen Live Activity, CarPlay dashboard widgets and CarPlay stage card">
 
 ## How it works
 
@@ -141,7 +148,7 @@ LyricsEngine     one per process, shared by the phone scene and the CarPlay scen
  SwiftUI  CarPlay templates   Live Activity        LyricsSnapshot -> App Group -> widget timeline
 ```
 
-Lyrics come from [LRCLIB](https://lrclib.net), a public, keyless lyrics database, and are fetched at runtime; none are bundled. Lookup order: exact match with album, exact match without album (LRCLIB answers 503 for some album lookups it has not cached), then fuzzy search filtered to tracks within 3 s of the Spotify duration, preferring synced lyrics. A network failure is never cached as "no lyrics"; only a definitive answer is. The data model (`SyncType.lineSynced / .unsynced`, `lines[{startMs, text}]`, `provider`) is the common shape for synced lyrics, so another source can slot in behind it.
+Lyrics come from [LRCLIB](https://lrclib.net), a public, keyless lyrics database, and are fetched at runtime; Release builds bundle none. Debug builds carry one invented demo song (`DemoSong`) for `-LyricarDemoSong`. Lookup order: exact match with album, exact match without album (LRCLIB answers 503 for some album lookups it has not cached), then fuzzy search filtered to tracks within 3 s of the Spotify duration, preferring synced lyrics. A network failure is never cached as "no lyrics"; only a definitive answer is. The data model (`SyncType.lineSynced / .unsynced`, `lines[{startMs, text}]`, `provider`) is the common shape for synced lyrics, so another source can slot in behind it.
 
 ### Staying in sync
 
@@ -185,7 +192,7 @@ App Review rejects silent-audio keep-alives. A store build would need ActivityKi
 
 ## Tests
 
-Unit tests for the shared logic (parser, clock, index lookup, widget timeline, Spotify decoding, LRCLIB fallback, sync precision, background recovery):
+Unit tests for the shared logic (parser, clock, index lookup, widget timeline, Spotify decoding, LRCLIB fallback, sync precision, background recovery, the demo song):
 
 ```sh
 cd Packages/LyricsKit && swift test
@@ -204,6 +211,8 @@ xcodebuild test -project Lyricar.xcodeproj -scheme Lyricar \
 Launch arguments for development:
 
 - `-LyricarDemo`: a fake playback clock on "Midnight City" by M83 instead of Spotify. Lyrics still come from LRCLIB through the real engine.
+- `-LyricarDemoSong`: with `-LyricarDemo`, an invented song, "Amber on the Dashboard", whose lyrics were written for this project and are answered offline through the real LRCLIB client. `-LyricarDemoStart <seconds>` sets where it starts.
+- `-LyricarTheme <style>` and `-lyricMode Karaoke|Focus|Verse`: force a style and the phone view, for recordings.
 - `-LyricarLiveActivity`: with `-LyricarDemo`, start the Live Activity at launch.
 - `-LyricarRenderGallery`: render every style and widget size to PNG.
 - `LYRICAR_HOST_TOKEN_FILE` (environment, Simulator Debug builds only): read a Spotify access token from a JSON file on the Mac (`{"access_token": "...", "expires_at": <epoch ms>}`) and skip the sign-in. Read-only; Lyricar never refreshes or writes it.
@@ -222,7 +231,7 @@ Lyricar talks to two services: the Spotify Web API (with your token, stored in t
 
 ## Contributing
 
-Issues and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) first; the local loop is the quick start above plus `swift test`. Contributions are accepted under the Apache License 2.0.
+Issues and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) first; the local loop is the quick start above plus `swift test`. [AGENTS.md](AGENTS.md) is the guide to the code for people and coding agents alike: build, test, layout and the rules that keep sync correct. [ROADMAP.md](ROADMAP.md) lists what comes next and the limits known today. Contributions are accepted under the Apache License 2.0.
 
 If Lyricar is useful to you, a star helps other people find it.
 
