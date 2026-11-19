@@ -34,16 +34,20 @@ xcodebuild -project Lyricar.xcodeproj -scheme Lyricar \
 CI (`.github/workflows/ci.yml`) runs the first two on every push and pull request. The UI tours
 and the device diagnostics are manual.
 
-Launch arguments for Debug builds (all compile out of Release):
+Launch arguments for Debug builds (the app reads them inside `#if DEBUG`, so Release ignores
+them):
 
 - `-LyricarDemo`: a fake playback clock instead of Spotify; lyrics come from LRCLIB.
 - `-LyricarDemoSong`: with `-LyricarDemo`, an invented song with lyrics written for this
   project, served offline (`DemoSong` in LyricsKit). Use it for every screenshot or video that
   gets published. `-LyricarDemoStart <seconds>` sets where the song starts.
-- `-LyricarTheme <style>` forces a style (`midnight`, `motorsport`, `idrive`, `panoramic`,
-  `sport`, `luxe`, `neon`, `daylight`); `-lyricMode Karaoke|Focus|Verse` picks the phone view.
+- `-LyricarTheme <raw value>` forces a style; the raw values are the `LyricTheme` cases in
+  `Shared/LyricTheme.swift`.
 - `-LyricarLiveActivity` starts the Live Activity at launch, `-LyricarRenderGallery` renders
   every style and widget size to `Documents/gallery`.
+
+`-lyricMode Karaoke|Focus|Verse` picks the phone view. It is a plain UserDefaults key
+(`@AppStorage` in `NowPlayingView`), so it works in every build, Release included.
 
 ## Layout
 
@@ -81,8 +85,10 @@ landing                   static site for lyricar.adatepe.dev
   app even when it is terminated.
 - **Styles live in `Shared/LyricTheme.swift`.** A change to a style must hold on every surface:
   run `-LyricarRenderGallery` and look at all eight sheets before committing.
-- **No lyrics ship in Release builds.** Lyrics are fetched from LRCLIB at runtime. The demo song
-  is the only lyric text in the source and is wrapped in `#if DEBUG`.
+- **No third-party lyrics in the source.** Lyrics are fetched from LRCLIB at runtime. Every
+  lyric line in the repository was written for this project: the widget placeholder
+  (`LyricsSnapshot.placeholder`), the demo song (`DemoSong`, wrapped in `#if DEBUG`) and the
+  test fixtures.
 - **Published media never shows real song lyrics.** Record and screenshot with
   `-LyricarDemo -LyricarDemoSong`.
 - **Never weaken, skip or delete a test to make it pass.** Change a test only when the

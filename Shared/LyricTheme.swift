@@ -378,8 +378,8 @@ struct LyricCard: View {
 }
 
 
-/// The style's signature mark. Motorsport: the three M stripes on a light badge plate,
-/// as on the cars (the official violet disappears on dark surfaces without it).
+/// The style's signature mark. Motorsport: the three tricolor stripes on a light badge
+/// plate (the violet stripe disappears on dark surfaces without it).
 /// Panoramic: its gradient line. Others: nil, callers fall back to their own glyph.
 struct StripeMark: View {
     let theme: LyricTheme
