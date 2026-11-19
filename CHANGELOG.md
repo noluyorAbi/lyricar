@@ -25,6 +25,25 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- When only the Lock Screen Live Activity shows lyrics, or the app is in the
+  background, Lyricar now asks Spotify for the playback position every 3 s.
+  Before, a Live Activity counted as a visible screen and polled every second,
+  and the background polled every 2 s while playing. On a locked phone that
+  earned a 98 minute rate limit from Spotify. Lines still change on time: the
+  local clock carries them between polls, and the poll at the end of a track
+  still catches the next song. The phone in front and CarPlay keep 1 s polls.
+
+### Added
+
+- The diagnostics log records empty and failed polls, rate limits with their
+  Retry-After included, so `scripts/pull-diagnostics.sh` can tell a stalled
+  poll loop from nothing playing.
+- Debug builds: `-LyricarDemoSong`, together with `-LyricarDemo`, plays an
+  invented song with lyrics written for this project, offline. Use it for
+  screenshots and recordings.
+
 ## [0.1.0] - 2026-10-21
 
 First public release.
