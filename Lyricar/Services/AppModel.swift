@@ -13,7 +13,12 @@ private let syncLog = Logger(subsystem: Bundle.main.bundleIdentifier ?? "lyricar
 final class AppModel {
     static let shared = AppModel()
 
+    #if DEBUG
+    /// `-LyricarDemoSong` answers lyrics lookups from the invented demo song, offline.
+    let engine = LyricsEngine(lyricsSource: DemoSource.playsSong ? DemoSong.client() : LRCLibClient())
+    #else
     let engine = LyricsEngine()
+    #endif
     @ObservationIgnored let liveActivity: LiveActivityController
     @ObservationIgnored let widgets: WidgetBridge
     @ObservationIgnored let keepAlive = BackgroundKeepAlive()
@@ -202,7 +207,7 @@ final class AppModel {
         if DemoSource.isRequested || UserDefaults.standard.bool(forKey: "LyricarStickyDemo") {
             engine.connect(DemoSource())
             isConnected = true
-            connectionNote = "Demo clock, real LRCLIB lyrics"
+            connectionNote = DemoSource.playsSong ? "Demo clock, invented demo song" : "Demo clock, real LRCLIB lyrics"
             if ProcessInfo.processInfo.arguments.contains("-LyricarLiveActivity") { liveActivityOn = true }
             return
         }

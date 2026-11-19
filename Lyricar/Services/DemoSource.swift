@@ -6,11 +6,15 @@ import LyricsKit
 /// It fakes only the playback clock; lyrics still come from LRCLIB through the real
 /// engine, so every surface renders real data. Used for screenshots when nothing
 /// is playing on the account.
+///
+/// `-LyricarDemoSong` plays `DemoSong` instead, an invented song whose lyrics were
+/// written for this project and are served offline, for media that gets published.
+/// `-LyricarDemoStart <seconds>` sets where the fake track starts.
 final class DemoSource: NowPlayingSource, PlayerControlling, @unchecked Sendable {
     /// Wall-clock moment the fake track was at 0 ms; commands move it like Spotify would.
-    private var started = Date().addingTimeInterval(-34)
+    private var started = Date().addingTimeInterval(-(Double(UserDefaults.standard.string(forKey: "LyricarDemoStart") ?? "") ?? 34))
     private var pausedAt: Int?
-    let track = SpotifyTrack(
+    let track = DemoSource.playsSong ? DemoSong.track : SpotifyTrack(
         id: "demo-midnight-city",
         name: "Midnight City",
         artists: ["M83"],
@@ -20,6 +24,7 @@ final class DemoSource: NowPlayingSource, PlayerControlling, @unchecked Sendable
     )
 
     static var isRequested: Bool { ProcessInfo.processInfo.arguments.contains("-LyricarDemo") }
+    static var playsSong: Bool { ProcessInfo.processInfo.arguments.contains("-LyricarDemoSong") }
 
     func currentlyPlaying() async throws -> NowPlaying? {
         let now = Date()

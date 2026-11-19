@@ -11,18 +11,23 @@ import WidgetKit
 enum StyleGallery {
     static func runIfRequested() {
         guard ProcessInfo.processInfo.arguments.contains("-LyricarRenderGallery") else { return }
+        // With `-LyricarDemoSong` the sheets show the invented demo song, for publishing.
+        let track = DemoSource.playsSong ? DemoSong.track : SpotifyTrack(
+            id: "gallery", name: "Midnight City", artists: ["M83"], album: "Midnight City",
+            artworkURL: nil, durationMs: 241_000)
+        let client = DemoSource.playsSong ? DemoSong.client() : LRCLibClient()
         Task {
-            let lyrics = (try? await LRCLibClient().lyrics(for: SpotifyTrack(
-                id: "gallery", name: "Midnight City", artists: ["M83"], album: "Midnight City",
-                artworkURL: nil, durationMs: 241_000))) ?? LyricsSnapshot.placeholder.document
-            render(document: lyrics)
+            let lyrics = (try? await client.lyrics(for: track)) ?? LyricsSnapshot.placeholder.document
+            render(document: lyrics, track: track)
         }
     }
 
-    static func render(document: LyricsDocument?) {
+    static func render(document: LyricsDocument?, track: SpotifyTrack) {
         let now = Date()
         var snapshot = LyricsSnapshot.placeholder
         snapshot.document = document
+        snapshot.trackName = track.name
+        snapshot.artist = track.artistLine
         // Paused: ImageRenderer cannot draw timer-driven progress views (real widgets can),
         // so the gallery shows the static progress at the same position.
         snapshot.isPlaying = false
@@ -39,7 +44,7 @@ enum StyleGallery {
             let current = index.map { lines[$0].displayText } ?? "\u{266A}"
             let next = index.flatMap { $0 + 1 < lines.count ? lines[$0 + 1].displayText : nil }
             let state = LyricActivityAttributes.ContentState(
-                trackName: "Midnight City", artist: "M83", currentLine: current, nextLine: next,
+                trackName: track.name, artist: track.artistLine, currentLine: current, nextLine: next,
                 lineNumber: (index ?? 0) + 1, lineCount: lines.count, isPlaying: false,
                 trackStart: snapshot.trackStartDate, trackEnd: snapshot.trackEndDate,
                 pausedFraction: 0.18, themeRaw: theme.rawValue)
@@ -68,7 +73,7 @@ enum StyleGallery {
                     tile(VerseWidgetView(entry: entry, familyOverride: .systemLarge), theme, 364, 382, "Verse L")
                     VStack(alignment: .leading, spacing: 18) {
                         tile(LyricActivityView(state: state, isStale: false, familyOverride: .small), theme, 200, 100, "CarPlay activity")
-                        tile(LyricCard(theme: theme, trackName: "Midnight City", artist: "M83", previous: nil,
+                        tile(LyricCard(theme: theme, trackName: track.name, artist: track.artistLine, previous: nil,
                                        current: current, next: next), theme, 300, 170, "CarPlay stage")
                     }
                 }
